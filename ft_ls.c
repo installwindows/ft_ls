@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2016/12/12 07:51:21 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/01/18 03:12:36 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int		main(int argc, char **argv)
 			directory = ft_strdup(*argv);
 	}
 	display_flags(flags);
-	d = opendir(directory == NULL ? CUR_DIR : directory);
+	d = opendir(directory == NULL ? "." : directory);
 	if (d)
 	{
 		while ((dir = readdir(d)) != NULL)

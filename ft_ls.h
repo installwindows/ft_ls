@@ -5,6 +5,5 @@
 # define FLAG_SMALL_R 4
 # define FLAG_R 8
 # define FLAG_SMALL_T 16
-# define CUR_DIR "."
 
 #endif
