@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/01/18 03:12:36 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/01/25 04:22:29 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,21 @@ void	set_flags(char *arg, int *flags)
 	}
 }
 
+void	set_order(char *arg)
+{
+	while (*arg)
+	{
+		if (ft_strchr(g_options, *arg))
+			*g_setorder++ = *arg;
+		arg++;
+}
+
+void	display_order(void)
+{
+	ft_printf("Order: |%s|\n", g_order);
+	usage();
+}
+
 void	display_flags(int flags)
 {
 	ft_putstr("Flags: ");
@@ -59,6 +74,11 @@ void	display_flags(int flags)
 	ft_putchar('\n');
 }
 
+void	usage(void)
+{
+	ft_printf("usage: ft_ls [%s] [file ...]\n", g_options);
+}
+
 int		main(int argc, char **argv)
 {
 	DIR				*d;
@@ -73,6 +93,7 @@ int		main(int argc, char **argv)
 		if (**argv == '-')
 			set_flags((*argv + 1), &flags);
 		else
+			//add argv and loop it here
 			directory = ft_strdup(*argv);
 	}
 	display_flags(flags);

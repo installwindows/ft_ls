@@ -6,4 +6,8 @@
 # define FLAG_R 8
 # define FLAG_SMALL_T 16
 
+const char	g_options[] = "alrRt";
+char		g_order[sizeof(g_options)];
+const char	*g_setorder = g_order;
+
 #endif
