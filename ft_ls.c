@@ -6,14 +6,21 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/01/25 04:22:29 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/01/25 04:39:52 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <dirent.h> 
 #include <stdio.h> 
+#include <stdlib.h>
 #include "libft.h"
 #include "ft_ls.h"
+
+void	usage(void)
+{
+	ft_printf("usage: ft_ls [%s] [file ...]\n", g_options);
+	exit(1);
+}
 
 void	set_flags(char *arg, int *flags)
 {
@@ -49,13 +56,14 @@ void	set_order(char *arg)
 	{
 		if (ft_strchr(g_options, *arg))
 			*g_setorder++ = *arg;
+		else
+			usage();
 		arg++;
 }
 
 void	display_order(void)
 {
 	ft_printf("Order: |%s|\n", g_order);
-	usage();
 }
 
 void	display_flags(int flags)
@@ -74,30 +82,27 @@ void	display_flags(int flags)
 	ft_putchar('\n');
 }
 
-void	usage(void)
-{
-	ft_printf("usage: ft_ls [%s] [file ...]\n", g_options);
-}
+
 
 int		main(int argc, char **argv)
 {
 	DIR				*d;
 	struct dirent	*dir;
 	int				flags;
-	char			*directory;
+	char			*files[argc];
 
-	directory = NULL;
+	files = NULL;
 	flags = 0;
 	while (*++argv)
 	{
 		if (**argv == '-')
-			set_flags((*argv + 1), &flags);
+			set_order((*argv + 1));
 		else
 			//add argv and loop it here
-			directory = ft_strdup(*argv);
+			files = ft_strdup(*argv);
 	}
-	display_flags(flags);
-	d = opendir(directory == NULL ? "." : directory);
+	display_order();
+	d = opendir(files == NULL ? "." : files);
 	if (d)
 	{
 		while ((dir = readdir(d)) != NULL)
