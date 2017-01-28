@@ -1,9 +1,18 @@
 NAME=ft_ls
 SRC=main.c
-LIB=libftprintf.a \
-	libft.a
 
 all: $(NAME)
 
 $(NAME):
-	gcc $(SRC) $(LIB)
+	make -C libft/ fclean && make -C libft/
+	make -C ft_printf/ fclean && make -C ft_printf/
+	gcc $(SRC) -Ilibft -Ift_printf -Llibft -Lft_printf -lft -lftprintf -o $(NAME)
+
+clean:
+
+fclean: clean
+	make -C libft/ fclean
+	make -C ft_printf/ fclean
+	rm -rf $(NAME)
+
+re: fclean all
