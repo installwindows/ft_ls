@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/01/27 09:07:55 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/01/28 01:55:40 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,17 @@
 #include "ft_ls.h"
 #include "ft_printf.h"
 
+void				opt_setup(int argc)
+{
+	g_opt = malloc(sizeof(t_opt));
+	g_opt->order = ft_strnew(sizeof(g_options) + 1);
+	g_opt->p_order = g_opt->order;
+	g_opt->files = malloc(sizeof(char*) * argc);
+	ft_memset(g_opt->files, 0, sizeof(char*) * argc);
+	g_opt->p_files = g_opt->files;
+	g_opt->nb_files = 0;
+	g_opt->f = 0;
+}
 void	usage(void)
 {
 	ft_printf("usage: ft_ls [%s] [file ...]\n", g_options);
@@ -54,12 +65,14 @@ void	display_opt(void)
 {
 	int		i;
 
-	ft_printf("options: |%s|\n", g_opt->order);
-	ft_printf(".......: |%b|\n", g_opt->f);
-	ft_printf("files :\n");
+	ft_printf("options: |%-*s|\n", sizeof(g_options) - 1, g_opt->order);
+	ft_printf("flags..: |%s|\n", g_options);
+	ft_printf("set....: |%.*b|\n", sizeof(g_options) -1,
+						ft_revbits(g_opt->f) >> (32 - sizeof(g_options) + 1));
+	ft_printf("files..:\n");
 	i = 0;
 	while (i < g_opt->nb_files)
-		ft_printf("\t%s\n", g_opt->files[i++]);
+		ft_printf("       :%s\n", g_opt->files[i++]);
 }
 
 int		main(int argc, char **argv)

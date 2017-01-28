@@ -1,6 +1,8 @@
 NAME=ft_ls
 SRC=main.c
 
+.PHONY: test
+
 all: $(NAME)
 
 $(NAME):
@@ -16,3 +18,6 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
+
+test:
+	gcc $(SRC) -Ilibft -Ift_printf -Llibft -Lft_printf -lft -lftprintf -o test
