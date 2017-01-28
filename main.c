@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/01/28 01:55:40 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/01/28 04:27:08 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int		main(int argc, char **argv)
 			set_file(*argv);
 	}
 	display_opt();
+
 	/*
 	d = opendir(files == NULL ? "." : files);
 	if (d)
