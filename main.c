@@ -6,11 +6,10 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/01/28 04:27:08 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/01 17:15:48 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <dirent.h> 
 #include <stdlib.h>
 #include "libft.h"
 #include "ft_ls.h"
@@ -88,8 +87,11 @@ int		main(int argc, char **argv)
 		else
 			set_file(*argv);
 	}
+	if (g_opt->nb_files == 0)
+		g_opt->files[0] = ".";
+	if (g_opt->f & F_LF == 0)
+		ft_sort_words(files);
 	display_opt();
-
 	/*
 	d = opendir(files == NULL ? "." : files);
 	if (d)
@@ -101,5 +103,5 @@ int		main(int argc, char **argv)
 		closedir(d);
 	}
 	*/
-	return(0);
+	return(ft_ls());
 }
