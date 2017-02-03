@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/01 14:37:33 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/01 17:15:52 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/02 17:27:10 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,9 @@ typedef struct		s_opt
 	char			*p_order;
 	char			**files;
 	char			**p_files;
+	char			**dirs;
+	char			**p_dirs;
+	int				nb_dirs;
 	int				nb_files;
 }					t_opt;
 

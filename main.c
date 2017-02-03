@@ -6,26 +6,33 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/01 17:15:48 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/02 18:05:46 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <dirent.h>
 #include "libft.h"
 #include "ft_ls.h"
 #include "ft_printf.h"
 
-void				opt_setup(int argc)
+void	opt_setup(int argc)
 {
 	g_opt = malloc(sizeof(t_opt));
 	g_opt->order = ft_strnew(sizeof(g_options) + 1);
 	g_opt->p_order = g_opt->order;
 	g_opt->files = malloc(sizeof(char*) * argc);
 	ft_memset(g_opt->files, 0, sizeof(char*) * argc);
+	g_opt->dirs = malloc(sizeof(char*) * argc);
+	ft_memset(g_opt->dirs, 0, sizeof(char*) * argc);
 	g_opt->p_files = g_opt->files;
+	g_opt->p_dirs = g_opt->dirs;
 	g_opt->nb_files = 0;
+	g_opt->nb_dirs = 0;
 	g_opt->f = 0;
 }
+
 void	usage(void)
 {
 	ft_printf("usage: ft_ls [%s] [file ...]\n", g_options);
@@ -55,9 +62,16 @@ void	set_order(char *arg)
 	}
 }
 
-void	set_file(char *file)
+void	set_file(char *path)
 {
-	g_opt->files[g_opt->nb_files++] = file;
+	struct stat	s;
+
+	ft_memset(&s, 0, sizeof(struct stat));
+	stat(path, &s);
+	if (S_ISREG(s.st_mode))
+		g_opt->files[g_opt->nb_files++] = path;
+	else
+		g_opt->dirs[g_opt->nb_dirs++] = path;
 }
 
 void	display_opt(void)
@@ -72,6 +86,10 @@ void	display_opt(void)
 	i = 0;
 	while (i < g_opt->nb_files)
 		ft_printf("       :%s\n", g_opt->files[i++]);
+	ft_printf("dirs...:\n");
+	i = 0;
+	while (i < g_opt->nb_dirs)
+		ft_printf("       :%s\n", g_opt->dirs[i++]);
 }
 
 int		main(int argc, char **argv)
@@ -87,10 +105,13 @@ int		main(int argc, char **argv)
 		else
 			set_file(*argv);
 	}
-	if (g_opt->nb_files == 0)
-		g_opt->files[0] = ".";
-	if (g_opt->f & F_LF == 0)
-		ft_sort_words(files);
+	if ((g_opt->nb_files | g_opt->nb_dirs) == 0)
+		g_opt->dirs[g_opt->nb_dirs++] = ".";
+	if ((g_opt->f & F_LF) == 0)
+	{
+		//g_opt->dirs = ft_sort_words(g_opt->dirs, g_opt->nb_dirs);
+		//g_opt->files = ft_sort_words(g_opt->files, g_opt->nb_files);
+	}
 	display_opt();
 	/*
 	d = opendir(files == NULL ? "." : files);
@@ -103,5 +124,5 @@ int		main(int argc, char **argv)
 		closedir(d);
 	}
 	*/
-	return(ft_ls());
+	return(0);
 }
