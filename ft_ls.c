@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/28 02:46:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/01 17:15:45 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/03 11:26:17 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include <sys/stat.h>
 #include "ft_ls.h"
 
-int		list_dir(char *dir_name)
+int		ft_ls(char *path)
 {
 	DIR				*dirp;
 	struct dirent	*cur;
@@ -25,7 +25,7 @@ int		list_dir(char *dir_name)
 	file_list = NULL;
 	dir_list = NULL;
 	current = file_list;
-	dir = opendir(dir_name);
+	dirp = opendir(path);
 	if (dirp)
 	{
 		while ((cur = readdir(dirp)))
@@ -37,18 +37,6 @@ int		list_dir(char *dir_name)
 	}
 	else
 	{
-
-	}
-}
-
-int		ft_ls(void)
-{
-	struct stat	file_stat;
-
-	while (*(g_opt->p_files))
-	{
-		stat(*(g_opt->p_files), &file_stat);
-		if (S_ISREG(file_stat.st_mode))
-			list_dir(*(g_opt->p_files));
+		
 	}
 }
