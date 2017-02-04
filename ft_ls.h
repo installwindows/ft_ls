@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/01 14:37:33 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/02 17:27:10 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/03 17:53:42 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,14 @@
 # include <dirent.h>
 # include <stdlib.h>
 # include "libft.h"
-# define F_LA 1 << 0
-# define F_LL 1 << 1
-# define F_LR 1 << 2
-# define F_UR 1 << 3
-# define F_LT 1 << 4
-# define F_LF 1 << 5
-
-const char	g_options[] = "alrRtf";
+# define FTLS_LA 1 << 0
+# define FTLS_LL 1 << 1
+# define FTLS_LR 1 << 2
+# define FTLS_UR 1 << 3
+# define FTLS_LT 1 << 4
+# define FTLS_LF 1 << 5
+# define g_options "alrRtf"
+//const char	g_options[] = "alrRtf";
 
 typedef struct		s_opt
 {
@@ -43,6 +43,8 @@ typedef struct		s_dir
 	struct s_dir	*next;
 }					t_dir;
 
-t_opt				*g_opt;
+t_opt		*g_opt;
+
+int					ft_ls(char *path);
 
 #endif

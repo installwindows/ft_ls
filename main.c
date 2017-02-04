@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/03 11:26:21 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/03 17:51:30 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,16 +107,16 @@ int		main(int argc, char **argv)
 	}
 	if ((g_opt->nb_files | g_opt->nb_dirs) == 0)
 		return (ft_ls("."));
-	if ((g_opt->f & F_LF) == 0)
+	if ((g_opt->f & FTLS_LF) == 0)
 	{
 		g_opt->dirs = ft_sort_words(g_opt->dirs, g_opt->nb_dirs);
 		g_opt->files = ft_sort_words(g_opt->files, g_opt->nb_files);
 	}
 	display_opt();
 	while (g_opt->p_files)
-		ft_ls(g_opt->p_files++);
+		ft_ls(*(g_opt->p_files)++);
 	while (g_opt->p_dirs)
-		ft_ls(g_opt->p_dirs++);
+		ft_ls(*(g_opt->p_dirs)++);
 	/*
 	d = opendir(files == NULL ? "." : files);
 	if (d)

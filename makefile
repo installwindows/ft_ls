@@ -1,5 +1,6 @@
 NAME=ft_ls
-SRC=main.c
+SRC=main.c \
+	ft_ls.c
 
 .PHONY: test
 
