@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/03 17:51:30 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/10 17:59:22 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include "libft.h"
 #include "ft_ls.h"
 #include "ft_printf.h"
+#include "global.h"
+#include "global_def.h"
 
 void	opt_setup(int argc)
 {

@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/01 14:37:33 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/03 17:53:42 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/10 18:03:29 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,6 @@
 # define FTLS_UR 1 << 3
 # define FTLS_LT 1 << 4
 # define FTLS_LF 1 << 5
-# define g_options "alrRtf"
-//const char	g_options[] = "alrRtf";
 
 typedef struct		s_opt
 {
@@ -42,8 +40,6 @@ typedef struct		s_dir
 	struct dirent	*file;
 	struct s_dir	*next;
 }					t_dir;
-
-t_opt		*g_opt;
 
 int					ft_ls(char *path);
 

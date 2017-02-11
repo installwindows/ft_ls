@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/01/28 02:46:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/03 17:48:23 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/02/06 15:30:44 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ int		ft_ls(char *path)
 	t_dir			*file_list;
 	t_dir			*dir_list;
 
+	return (0);
 	file_list = NULL;
 	dir_list = NULL;
 	dirp = opendir(path);

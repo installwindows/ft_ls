@@ -21,4 +21,4 @@ fclean: clean
 re: fclean all
 
 test:
-	gcc $(SRC) -Ilibft -Ift_printf -Llibft -Lft_printf -lft -lftprintf -o test
+	gcc $(SRC) -g -Ilibft -Ift_printf -Llibft -Lft_printf -lft -lftprintf -o test
