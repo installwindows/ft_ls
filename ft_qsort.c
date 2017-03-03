@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/28 02:22:14 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/28 03:01:15 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/02 19:48:25 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ static void	swap(void *a, void *b, size_t size)
 	while (size--)
 	{
 		tmp = *x;
-		*x = *y;
-		*y = tmp;
+		*x++ = *y;
+		*y++ = tmp;
 	}
 }
 
@@ -60,7 +60,7 @@ static void	sort(void *array, size_t size,
 void		ft_qsort(void *array, int n, int size,
 					int (*cmp)(const void *, const void *))
 {
-	sort(array, size, cmp, 0, n * size);
+	sort(array, size, cmp, 0, (n - 1) * size);
 }
 
 int			cmpstr(const void *s1, const void *s2)
@@ -68,8 +68,10 @@ int			cmpstr(const void *s1, const void *s2)
 	const char	*a;
 	const char	*b;
 
-	a = s1;
-	b = s2;
+	a = *((char**)s1);
+	b = *((char**)s2);
+	if (!a || !b)
+		return (0);
 	while (*a == *b && *a && *b)
 	{
 		a++;
