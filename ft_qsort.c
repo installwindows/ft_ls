@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/28 02:22:14 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/06 17:47:34 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/06 20:26:12 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,21 @@ static void	sort(void *array, size_t size,
 	if (end > begin)
 	{
 		pivot = array + begin;
-		l = pivot;
+		swap(array + begin, pivot, size);
+		l = begin + size;
 		r = end;
 		while (l < r)
 		{
-			if (cmp(array + l, pivot) <= 0)
+			while (l < end && cmp(array + l, pivot) <= 0)
 				l += size;
-			else if (cmp(array + r, pivot) > 0)
+			while (cmp(array + r, pivot) > 0)
 				r -= size;
-			else if (l < r)
+			if (l < r)
 				swap(array + l, array + r, size);
 		}
-		l -= size;
-		swap(array + begin, array + l, size);
-		sort(array, size, cmp, begin, l);
-		sort(array, size, cmp, r, end);
+		swap(pivot, array + r, size);
+		sort(array, size, cmp, begin, r - size);
+		sort(array, size, cmp, r + size, end);
 	}
 }
 
@@ -74,6 +74,7 @@ int			cmpstr(const void *s1, const void *s2)
 	return (ft_strcmp(a, b));
 }
 
+/*
 int			main(int argc, char **argv)
 {
 	if (argc > 1)
@@ -83,3 +84,4 @@ int			main(int argc, char **argv)
 			printf("%s\n", *argv++);
 	}
 }
+*/
