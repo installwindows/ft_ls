@@ -6,12 +6,13 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/28 02:22:14 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/02 19:48:25 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/06 17:47:34 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
 #include <stdio.h>
+#include "libft.h"
 
 static void	swap(void *a, void *b, size_t size)
 {
@@ -39,7 +40,7 @@ static void	sort(void *array, size_t size,
 	if (end > begin)
 	{
 		pivot = array + begin;
-		l = begin + size;
+		l = pivot;
 		r = end;
 		while (l < r)
 		{
@@ -68,16 +69,9 @@ int			cmpstr(const void *s1, const void *s2)
 	const char	*a;
 	const char	*b;
 
-	a = *((char**)s1);
-	b = *((char**)s2);
-	if (!a || !b)
-		return (0);
-	while (*a == *b && *a && *b)
-	{
-		a++;
-		b++;
-	}
-	return (*a - *b);
+	a = *(char**)s1;
+	b = *(char**)s2;
+	return (ft_strcmp(a, b));
 }
 
 int			main(int argc, char **argv)

@@ -6,73 +6,73 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/24 06:37:59 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/24 09:59:15 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/06 17:02:52 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include <stdlib.h>
 #include <dirent.h>
 #include <sys/stat.h>
 #include "libft.h"
-#define MAX_LENGTH 1024
+#include "tmp.h"
 
-static char			g_rp = [MAX_LENGTH];
-static char 		*g_rp_p;
-
-static void				insertlist(struct dirent **list, int size, int p,
-						struct dirent *e)
+int		dir_alphasort(const void *a, const void *b)
 {
-	while (p < size--)
-		list[size] += 1;;
-	list[p] = e;
+	const struct dirent	*x;
+	const struct dirent	*y;
+
+	x = *(struct dirent **)a;
+	y = *(struct dirent **)b;
+	return (ft_strcmp(x->d_name, y->d_name));
 }
 
-static struct dirent	**addlist(struct dirent **list, int size,
-						struct dirent *e, int *cmp(const char *, const char *))
+int		dotfilter(struct dirent *e)
 {
-	int		r;
-	int		i;
-	int		high;
-	int		low;
-
-	low = 0;
-	high = size;
-	i = high / 2;
-	while ((r = cmp((*list)[i]->d_name, e->d_name)))
-	{
-		if (r > 0)
-		{
-			low = i;
-			i += (high - low) / 2;
-		}
-		else if (r < 0)
-		{
-			high = i;
-			i -= (high - low) / 2
-		}
-		else
-			break ;
-		if ((high - low) / 2 == 0)
-			break ;
-	}
-	insertlist(list, size, r ? i : size, e);
-	return (list);
+	return (e->d_name[0] == '.');
 }
 
-struct dirent	ft_scandir(const char *path)
+int		ft_scandir(const char *path, struct dirent ***nlist,
+		int (*filter)(struct dirent *), int (*cmp)(const void *, const void *))
 {
 	DIR				*dirp;
 	struct dirent	**list;
-	struct dirent	*elem;
-	struct stat		s;
-	int				size;
+	struct dirent	*e;
+	size_t			size;
+	size_t			i;
 
-	g_rp_p = ft_strcat(g_rp, path);
-	if ((dirp = opendir(path)))
+	dirp = opendir(path);
+	if (dirp == NULL)
+		return (-1);
+	size = ft_dirsize(path, filter);
+	list = malloc(sizeof(struct dirent *) * (size + 1));
+	i = 0;
+	while ((e = readdir(dirp)))
 	{
-		return (1);
+		if (filter && filter(e))
+			continue ;
+		list[i++] = ft_memdup(e, e->d_reclen);
 	}
-	while ((elem = readdir(dirp)))
-	{
-		addlist(list, size, elem);
-	}
+	list[i] = NULL;
+	closedir(dirp);
+	if (size && cmp)
+		ft_qsort(list, size, sizeof(struct dirent *), cmp);
+	*nlist = list;
+	return ((int)size);
+}
+
+int		main(int argc, char **argv)
+{
+	struct dirent	**list;
+	char	*path;
+	int		size;
+
+	path = ".";
+	if (argc > 1)
+		path = argv[1];
+	size = ft_scandir(path, &list, dotfilter, dir_alphasort);
+	if (size < 0)
+		return -1;
+	printf("size: %d\n", size);
+	while (size--)
+		printf("%s\n", (*list++)->d_name);
 }
