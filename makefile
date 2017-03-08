@@ -1,6 +1,10 @@
 NAME=ft_ls
-SRC=main.c \
-	ft_ls.c
+SRC=tmpmain.c \
+	ft_nls.c \
+	ft_scandir.c \
+	ft_memdup.c \
+	ft_dirsize.c \
+	ft_qsort.c
 
 .PHONY: test
 

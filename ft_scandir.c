@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/24 06:37:59 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/06 17:02:52 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/07 14:55:06 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,18 @@ int		dir_alphasort(const void *a, const void *b)
 	x = *(struct dirent **)a;
 	y = *(struct dirent **)b;
 	return (ft_strcmp(x->d_name, y->d_name));
+}
+
+int		dirfilter(struct dirent *e)
+{
+	struct stat	s;
+
+	if (e->d_type == DT_UNKNOWN)
+	{
+		stat(e->d_name, &s);
+		return (S_ISDIR(s.st_mode));
+	}
+	return (e->d_type == DT_DIR);
 }
 
 int		dotfilter(struct dirent *e)
@@ -59,7 +71,7 @@ int		ft_scandir(const char *path, struct dirent ***nlist,
 	*nlist = list;
 	return ((int)size);
 }
-
+/*
 int		main(int argc, char **argv)
 {
 	struct dirent	**list;
@@ -69,10 +81,11 @@ int		main(int argc, char **argv)
 	path = ".";
 	if (argc > 1)
 		path = argv[1];
-	size = ft_scandir(path, &list, dotfilter, dir_alphasort);
+	size = ft_scandir(path, &list, dirfilter, dir_alphasort);
 	if (size < 0)
 		return -1;
 	printf("size: %d\n", size);
 	while (size--)
 		printf("%s\n", (*list++)->d_name);
 }
+*/

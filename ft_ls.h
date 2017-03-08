@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/01 14:37:33 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/10 18:03:29 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/07 14:47:11 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ typedef struct		s_opt
 
 typedef struct		s_dir
 {
-	struct dirent	*file;
+	char			*path;
 	struct s_dir	*next;
 }					t_dir;
 
