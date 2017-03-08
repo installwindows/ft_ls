@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/24 06:37:59 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/07 14:55:06 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/07 20:21:26 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ int		dirfilter(struct dirent *e)
 
 int		dotfilter(struct dirent *e)
 {
+	if (e->d_name[0] == '.' && e->d_name[1] == '/')
+		return (0);
 	return (e->d_name[0] == '.');
 }
 

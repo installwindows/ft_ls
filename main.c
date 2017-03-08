@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2016/12/12 02:17:54 by varnaud           #+#    #+#             */
-/*   Updated: 2017/02/10 17:59:22 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/07 20:10:05 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,16 +119,5 @@ int		main(int argc, char **argv)
 		ft_ls(*(g_opt->p_files)++);
 	while (g_opt->p_dirs)
 		ft_ls(*(g_opt->p_dirs)++);
-	/*
-	d = opendir(files == NULL ? "." : files);
-	if (d)
-	{
-		while ((dir = readdir(d)) != NULL)
-		{
-			ft_putendl(dir->d_name);
-		}
-		closedir(d);
-	}
-	*/
 	return(0);
 }
