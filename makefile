@@ -4,7 +4,8 @@ SRC=tmpmain.c \
 	ft_scandir.c \
 	ft_memdup.c \
 	ft_dirsize.c \
-	ft_qsort.c
+	ft_qsort.c \
+	printfile.c
 
 .PHONY: test
 

@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/02/01 14:37:33 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/07 14:47:11 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/08 21:25:29 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,22 @@ typedef struct		s_dir
 	struct s_dir	*next;
 }					t_dir;
 
+typedef struct		s_file
+{
+	struct dirent	*e;
+	struct stat		*s;
+	char			*path;
+}					t_file;
+
+typedef struct		s_dirinfo
+{
+	long			size;
+	int				linkwidth;
+	int				bytewidth;
+}					t_dirinfo;
+
 int					ft_ls(char *path);
+void	printfile(const char *name, const char *path, struct stat *s,
+		t_dirinfo w);
 
 #endif
