@@ -14,7 +14,14 @@
 #include <time.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#include <uuid/uuid.h>
+#ifdef __APPLE__
+	#include <uuid/uuid.h>
+	#define m_listxattr(a, b, c, d) listxattr(a, b, c, d)
+	#define GETTIME() c->s.st_mtimespec.tv_sec
+#elif __linux__
+	#define m_listxattr(a, b, c, d) listxattr(a, b, c)
+	#define GETTIME() c->s.st_mtim.tv_sec
+#endif
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
@@ -134,7 +141,7 @@ t_file				*addfile(struct dirent *e, const char *dname)
 	file->gr = getgrgid(file->s.st_gid);
 	file->size = file->s.st_size;
 	file->nlink = file->s.st_nlink;
-	file->xattr = listxattr(file->path, NULL, 0, 0);
+	file->xattr = m_listxattr(file->path, NULL, 0, 0);
 	file->blocks = file->s.st_blocks;
 	file->next = NULL;
 	return (file);
@@ -157,7 +164,7 @@ void				print_file(t_file *c, t_opt *options, int mlink, int mbyte)
 		c->s.st_mode & S_IXOTH ? 'x' : '-',
 		c->xattr ? "@" : "", mlink, c->nlink,
 		c->pw->pw_name, c->gr->gr_name, mbyte, c->size);
-		print_time(c->s.st_mtimespec.tv_sec);
+		print_time(GETTIME());
 	}
 	ft_printf("%s\n", c->e ? c->e->d_name : c->path);
 }
@@ -354,7 +361,7 @@ t_file				*get_argfile(const char *name)
 	file->gr = getgrgid(file->s.st_gid);
 	file->size = file->s.st_size;
 	file->nlink = file->s.st_nlink;
-	file->xattr = listxattr(file->path, NULL, 0, 0);
+	file->xattr = m_listxattr(file->path, NULL, 0, 0);
 	file->blocks = file->s.st_blocks;
 	file->next = NULL;
 	return (file);
