@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/14 23:45:25 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/15 04:04:25 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include "ft_printf.h"
 #include "ft_mergesort.c"
 
+struct group	gg;
 char				*get_path(const char *dname, const char *fname)
 {
 	char	*path;
@@ -85,6 +86,8 @@ void	print_time(time_t t)
 t_file				*addfile(struct dirent *e, const char *dname)
 {
 	t_file			*file;
+	struct group	*g;
+	struct passwd	*p;
 
 	file = malloc(sizeof(t_file));
 	ft_memset(file, 0, sizeof(t_file));
@@ -95,8 +98,10 @@ t_file				*addfile(struct dirent *e, const char *dname)
 	lstat(file->path, &file->s);
 	//if (file->s.st_mode & S_IFLNK)
 	//	lstat(file->path, &file->s);
-	file->pw = getpwuid(file->s.st_uid);
-	file->gr = getgrgid(file->s.st_gid);
+	p = getpwuid(file->s.st_uid);
+	file->pw = p;
+	g = getgrgid(file->s.st_gid);
+	file->gr = g;
 	file->size = file->s.st_size;
 	file->nlink = file->s.st_nlink;
 	file->xattr = m_listxattr(file->path, NULL, 0, 0);
@@ -110,7 +115,6 @@ void				print_file(t_file *c, t_opt *options, int mlink, int mbyte)
 	char	buf[255];
 
 	ft_memset(buf, 0, 255);
-	//TODO symlink
 	if (options->l)
 	{
 		ft_printf("%c%c%c%c%c%c%c%c%c%c%1s %*d %s  %s  %*lld ",
@@ -144,7 +148,7 @@ void				print_dir(t_dir *dir, t_opt *options)
 	t_file	*c;
 
 	c = dir->list;
-	if (options->l)
+	if (options->l && dir->list)
 		ft_printf("total %d\n", dir->size);
 	while (c)
 	{
@@ -289,7 +293,7 @@ void				set_files(char **arg, t_dlist **d, t_dlist **f)
 	while (*arg)
 	{
 		ft_memset(&s, 0, sizeof(struct stat));
-		stat(*arg, &s);
+		lstat(*arg, &s);
 		if (S_ISDIR(s.st_mode))
 		{
 			*d = malloc(sizeof(t_dlist));
@@ -341,6 +345,8 @@ t_file				*get_argfile(const char *name)
 	file->xattr = m_listxattr(file->path, NULL, 0, 0);
 	file->blocks = file->s.st_blocks;
 	file->next = NULL;
+	//ft_printf("e: %s\npath: %s\nuid: %lld\nlink? %d\n",
+	//		name, file->path, file->s.st_uid, S_ISLNK(file->s.st_mode));
 	return (file);
 }
 
@@ -376,6 +382,7 @@ void				print_arg_files(t_dlist *files, t_opt *options)
 
 int					main(int argc, char **argv)
 {
+	gg.gr_name = "july";
 	t_opt			*options;
 	t_dlist			*dirlist;
 	t_dlist			*filelist;

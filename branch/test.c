@@ -1,28 +1,47 @@
 #include <sys/stat.h>
+#include <stdlib.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+
+typedef struct s_node
+{
+	struct passwd *pw;
+	char	buf[1000];
+	struct s_node *next;
+}				t_node;
+
+void	add(t_node **l, struct passwd *pw)
+{
+	t_node *n;
+
+	n = malloc(sizeof(t_node));
+	n->pw = pw;
+	n->next = *l;
+	*l = n;
+}
+
 
 int		main(int argc, char **argv)
 {
 	struct stat		s;
 	struct passwd	*pw;
 	char			buf[255];
+	t_node			*list;
 
+	list = NULL;
 	memset(buf, 0, 255);
 	memset(&s, 0, sizeof(struct stat));
 	if (argc > 1)
 	{
-		lstat(*++argv, &s);
-		if (S_ISREG(s.st_mode))
-			printf("Reg\n");
-		if (S_ISLNK(s.st_mode))
+		while (*++argv)
 		{
-			//lstat(*argv, &s);
-			readlink(*argv, buf, 255);
-			printf("Link: %s\n", buf);
+			lstat(*argv, &s);
+			pw = getpwuid(s.st_uid);
+			add(&list, pw);
+			printf("%s,", *argv);
 		}
-		printf("%lld Link? %d\n", s.st_size, s.st_mode & S_IFLNK);
 	}
+	getchar();
 }
