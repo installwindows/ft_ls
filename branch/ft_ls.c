@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/14 00:08:43 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/14 23:45:25 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,6 @@
 #include <time.h>
 #include <dirent.h>
 #include <sys/stat.h>
-#ifdef __APPLE__
-	#include <uuid/uuid.h>
-	#define m_listxattr(a, b, c, d) listxattr(a, b, c, d)
-	#define GETTIME() c->s.st_mtimespec.tv_sec
-#elif __linux__
-	#define m_listxattr(a, b, c, d) listxattr(a, b, c)
-	#define GETTIME() c->s.st_mtim.tv_sec
-#endif
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
@@ -29,6 +21,7 @@
 #include "libft.h"
 #include "ft_ls.h"
 #include "ft_printf.h"
+#include "ft_mergesort.c"
 
 char				*get_path(const char *dname, const char *fname)
 {
@@ -36,7 +29,7 @@ char				*get_path(const char *dname, const char *fname)
 
 	path = malloc(sizeof(char) * (ft_strlen(dname) + ft_strlen(fname) + 1));
 	*path = '\0';
-	ft_strcat(path, dname);
+	ft_strcpy(path, dname);
 	ft_strcat(path, "/");
 	ft_strcat(path, fname);
 	return (path);
@@ -44,19 +37,19 @@ char				*get_path(const char *dname, const char *fname)
 
 char	entry_type(mode_t st_mode)
 {
-	if (st_mode & S_IFIFO)
+	if (S_ISFIFO(st_mode))
 		return ('p');
-	if (st_mode & S_IFCHR)
+	if (S_ISCHR(st_mode))
 		return ('c');
-	if (st_mode & S_IFDIR)
+	if (S_ISDIR(st_mode))
 		return ('d');
-	if (st_mode & S_IFBLK)
+	if (S_ISBLK(st_mode))
 		return ('b');
-	if (st_mode & S_IFREG)
+	if (S_ISREG(st_mode))
 		return ('-');
-	if (st_mode & S_IFLNK)
+	if (S_ISLNK(st_mode))
 		return ('l');
-	if (st_mode & S_IFSOCK)
+	if (S_ISSOCK(st_mode))
 		return ('s');
 	return ('-');
 }
@@ -89,54 +82,19 @@ void	print_time(time_t t)
 	free(timestamp);
 }
 
-typedef struct		s_file
-{
-	struct dirent	*e;
-	char			*path;
-	struct stat		s;
-	struct passwd	*pw;
-	struct group	*gr;
-	int				size;
-	int				nlink;
-	int				xattr;
-	int				blocks;
-	struct s_file	*next;
-}					t_file;
-
-typedef struct		s_dir
-{
-	t_file			*list;
-	char			*path;
-	int				size;
-	int				mlink;
-	int				mbyte;
-}					t_dir;
-
-typedef struct		s_opt
-{
-	int				a;
-	int				l;
-	int				R;
-	int				r;
-	int				t;
-}					t_opt;
-
-typedef struct		s_dlist
-{
-	char			*dirname;
-	struct s_dlist	*next;
-}					t_dlist;
-
 t_file				*addfile(struct dirent *e, const char *dname)
 {
 	t_file			*file;
 
 	file = malloc(sizeof(t_file));
+	ft_memset(file, 0, sizeof(t_file));
 	if (file == NULL)
 		return (NULL);
 	file->e = e;
 	file->path = get_path(dname, e->d_name);
-	stat(file->path, &file->s);
+	lstat(file->path, &file->s);
+	//if (file->s.st_mode & S_IFLNK)
+	//	lstat(file->path, &file->s);
 	file->pw = getpwuid(file->s.st_uid);
 	file->gr = getgrgid(file->s.st_gid);
 	file->size = file->s.st_size;
@@ -149,9 +107,13 @@ t_file				*addfile(struct dirent *e, const char *dname)
 
 void				print_file(t_file *c, t_opt *options, int mlink, int mbyte)
 {
+	char	buf[255];
+
+	ft_memset(buf, 0, 255);
+	//TODO symlink
 	if (options->l)
 	{
-		ft_printf("%c%c%c%c%c%c%c%c%c%c%1s %*d %s  %s  %*d ",
+		ft_printf("%c%c%c%c%c%c%c%c%c%c%1s %*d %s  %s  %*lld ",
 		entry_type(c->s.st_mode),
 		c->s.st_mode & S_IRUSR ? 'r' : '-',
 		c->s.st_mode & S_IWUSR ? 'w' : '-',
@@ -164,9 +126,17 @@ void				print_file(t_file *c, t_opt *options, int mlink, int mbyte)
 		c->s.st_mode & S_IXOTH ? 'x' : '-',
 		c->xattr ? "@" : "", mlink, c->nlink,
 		c->pw->pw_name, c->gr->gr_name, mbyte, c->size);
-		print_time(GETTIME());
+		print_time(GETTIME(c->s));
+		ft_printf("%s", c->e ? c->e->d_name : c->path);
+		if (S_ISLNK(c->s.st_mode))
+		{
+			readlink(c->path, buf, 255);
+			ft_printf(" -> %s", buf);
+		}
 	}
-	ft_printf("%s\n", c->e ? c->e->d_name : c->path);
+	else
+		ft_printf("%s", c->e ? c->e->d_name : c->path);
+	ft_printf("\n");
 }
 
 void				print_dir(t_dir *dir, t_opt *options)
@@ -243,7 +213,7 @@ int					ft_ls(const char *dirname, t_opt *options)
 	}
 	dir->mlink = ft_numlen(dir->mlink);
 	dir->mbyte = ft_numlen(dir->mbyte);
-	//TODO sort dir
+	ft_mergesort(&dir->list, options->cmp);
 	print_dir(dir, options);
 	//TODO free dir
 	dirlist = get_dir(dir);
@@ -275,10 +245,11 @@ int					set_options(char **arg, t_opt **options)
 	count = 0;
 	*options = malloc(sizeof(t_opt));
 	ft_memset(*options, 0, sizeof(t_opt));
+	(*options)->cmp = cmp_alpha;
 	while (*arg)
 	{
 		if (**arg == '-' && (*arg)[1] == '\0')
-			return (count);
+			break ;
 		if (**arg == '-')
 			while (*++(*arg))
 			{
@@ -293,13 +264,19 @@ int					set_options(char **arg, t_opt **options)
 				else if (**arg == 't')
 					(*options)->t = 1;
 				else
-					usage(**arg);
+					;//usage(**arg);
 			}
 		else
-			return (count);
+			break ;
 		arg++;
 		count++;
 	}
+	if ((*options)->r && (*options)->t)
+		(*options)->cmp = cmp_revtime;
+	else if ((*options)->r)
+		(*options)->cmp = cmp_revalpha;
+	else if ((*options)->t)
+		(*options)->cmp = cmp_time;
 	return (count);
 }
 
@@ -356,7 +333,7 @@ t_file				*get_argfile(const char *name)
 	file = malloc(sizeof(t_file));
 	file->e = NULL;
 	file->path = (char*)name;
-	stat(file->path, &file->s);
+	lstat(file->path, &file->s);
 	file->pw = getpwuid(file->s.st_uid);
 	file->gr = getgrgid(file->s.st_gid);
 	file->size = file->s.st_size;
@@ -369,10 +346,10 @@ t_file				*get_argfile(const char *name)
 
 void				print_arg_files(t_dlist *files, t_opt *options)
 {
-	t_file	*list;
-	t_file	**cur;
-	int		mlink;
-	int		mbyte;
+	t_file		*list;
+	t_file		**cur;
+	long long	mlink;
+	long long	mbyte;
 
 	list = NULL;
 	cur = &list;
