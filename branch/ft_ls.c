@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/15 23:08:25 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/16 04:26:21 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -148,7 +148,7 @@ void				print_file(t_file *c, t_opt *options, t_dir *dir)
 		c->s.st_mode & S_IXOTH ? 'x' : '-',
 		c->xattr ? "@" : "", dir->mlink, c->nlink,
 		dir->mpw, c->pw->pw_name, dir->mgr, c->gr->gr_name, dir->mbyte, c->size);
-		print_time(GETTIME(c->s));
+		print_time(c->s.st_mtimespec.tv_sec);
 		ft_printf("%s", c->e ? c->e->d_name : c->path);
 		if (S_ISLNK(c->s.st_mode))
 		{
@@ -245,7 +245,12 @@ int					ft_ls(const char *dirname, t_opt *options)
 	}
 	dir->mlink = ft_numlen(dir->mlink);
 	dir->mbyte = ft_numlen(dir->mbyte);
-	ft_mergesort(&dir->list, options->cmp);
+	if (!options->f)
+	{
+		if (options->t)
+			ft_mergesort(&dir->list, cmp_alpha);
+		ft_mergesort(&dir->list, options->cmp);
+	}
 	print_dir(dir, options);
 	//TODO free dir
 	dirlist = get_dir(dir);
@@ -305,6 +310,11 @@ int					set_options(char **arg, t_opt **options)
 				{
 					(*options)->t = 1;
 					(*options)->s = lstat;
+				}
+				else if (**arg == 'f')
+				{
+					(*options)->f = 1;
+					(*options)->a = 1;
 				}
 				else if (**arg == '-')
 				{
@@ -454,6 +464,18 @@ int					main(int argc, char **argv)
 	//exit(0);
 	if (argc > 1 && (filelist || dirlist))
 	{
+		/*
+		if (!options->f)
+		{
+			if (options->t)
+			{
+				ft_mergesort(&filelist, cmp_alpha);
+				ft_mergesort(&dirlist, cmp_alpha);
+			}
+			ft_mergesort(&filelist, options->cmp);
+			ft_mergesort(&dirlist, options->cmp);
+		}
+		*/
 		print_arg_files(filelist, options);
 		if ((filelist && dirlist) || (dirlist && dirlist->next))
 			ft_printf("%s%s:\n", filelist ? "\n" : "", dirlist->dirname);

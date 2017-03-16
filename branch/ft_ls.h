@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 21:19:06 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/15 22:10:03 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/16 02:50:23 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,9 @@
 # ifdef __APPLE__
 #  include <uuid/uuid.h>
 #  define m_listxattr(a, b, c, d) listxattr(a, b, c, d)
-#  define GETTIME(s) s.st_mtimespec.tv_sec
 # elif __linux__
 #  define m_listxattr(a, b, c, d) listxattr(a, b, c)
-#  define GETTIME(s) s.st_mtim.tv_sec
+#  define mtimespec st_mtim
 # endif
 
 typedef struct		s_file
@@ -57,6 +56,7 @@ typedef struct		s_opt
 	int				R;
 	int				r;
 	int				t;
+	int				f;
 	int				(*cmp)(void *, void *);
 	int				(*s)(const char *restrict, struct stat *restrict);
 }					t_opt;

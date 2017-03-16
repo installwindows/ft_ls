@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 18:58:46 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/14 21:49:47 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/16 04:14:44 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 /*
@@ -16,6 +16,7 @@
 #include "ft_ls.h"
 #include "libft.h"
 */
+/*
 void	add(t_file **list, const char *data)
 {
 	t_file	*new;
@@ -26,7 +27,7 @@ void	add(t_file **list, const char *data)
 	new->next = *list;
 	*list = new;
 }
-
+*/
 /*
 void	print(t_file *list)
 {
@@ -128,7 +129,10 @@ int		cmp_time(void *a, void *b)
 
 	x = (t_file*)a;
 	y = (t_file*)b;
-	return (GETTIME(x->s) < GETTIME(y->s));
+	if (y->s.st_mtimespec.tv_sec == x->s.st_mtimespec.tv_sec)
+		//if (y->s.st_mtimespec.tv_nsec && x->s.st_mtimespec.tv_nsec)
+		return (y->s.st_mtimespec.tv_nsec - x->s.st_mtimespec.tv_nsec);
+	return (y->s.st_mtimespec.tv_sec - x->s.st_mtimespec.tv_sec);
 }
 
 int		cmp_revtime(void *a, void *b)
@@ -138,7 +142,10 @@ int		cmp_revtime(void *a, void *b)
 
 	x = (t_file*)a;
 	y = (t_file*)b;
-	return (GETTIME(x->s) > GETTIME(y->s));
+	if (y->s.st_mtimespec.tv_sec == x->s.st_mtimespec.tv_sec)
+	//if (y->s.st_mtimespec.tv_nsec && x->s.st_mtimespec.tv_nsec)
+		return (x->s.st_mtimespec.tv_nsec - y->s.st_mtimespec.tv_nsec);
+	return (x->s.st_mtimespec.tv_sec - y->s.st_mtimespec.tv_sec);
 }
 /*
 int		main(void)
