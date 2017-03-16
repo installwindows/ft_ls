@@ -27,6 +27,7 @@ void	add(t_file **list, const char *data)
 	*list = new;
 }
 
+/*
 void	print(t_file *list)
 {
 	while (list)
@@ -36,6 +37,7 @@ void	print(t_file *list)
 	}
 	printf("\n");
 }
+*/
 
 void	split(t_file *list, t_file **a, t_file **b)
 {

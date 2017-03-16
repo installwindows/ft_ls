@@ -27,13 +27,31 @@ struct group	gg;
 char				*get_path(const char *dname, const char *fname)
 {
 	char	*path;
+	char	*r;
 
 	path = malloc(sizeof(char) * (ft_strlen(dname) + ft_strlen(fname) + 1));
-	*path = '\0';
-	ft_strcpy(path, dname);
-	ft_strcat(path, "/");
-	ft_strcat(path, fname);
-	return (path);
+	r = path;
+	path[0] = '\0';
+	while ((*path = *dname))
+	{
+		path++;
+		dname++;
+	}
+		;
+	if (*(path - 2) != '/')
+	{
+		*(path - 1) = '/';
+		*path = '\0';
+	}
+	while ((*path = *fname))
+	{
+		path++;
+		fname++;
+	}
+	//ft_strcpy(path, dname);
+	//ft_strcat(path, "/");
+	//ft_strcat(path, fname);
+	return (r);
 }
 
 char	entry_type(mode_t st_mode)
@@ -59,28 +77,32 @@ void	print_time(time_t t)
 {
 	time_t	c;
 	char	*fulldate;
-	char	*month;
-	int		day;
-	char	*timestamp;
+	//char	*month;
+	//int		day;
+	//char	*timestamp;
 
 	c = time(NULL);
 	fulldate = ctime(&t);
-	month = ft_strdup(fulldate + 4);
-	month[3] = '\0';
-	day = ft_atoi(fulldate + 8);
+	//month = ft_strdup(fulldate + 4);
+	//month[3] = '\0';
+	//day = ft_atoi(fulldate + 8);
+	ft_printf("%.3s %2d ", fulldate + 4, ft_atoi(fulldate + 8));
 	if (c - t > 15780000 || c - t < -15780000)
 	{
-		timestamp = ft_strdup(fulldate + ft_strlen(fulldate) - 5);
-		timestamp[4] = '\0';
+		//timestamp = ft_strdup(fulldate + ft_strlen(fulldate) - 5);
+		//timestamp[4] = '\0';
+		ft_printf(" %.4s ", fulldate + ft_strlen(fulldate) - 5);
 	}
 	else
 	{
-		timestamp = ft_strdup(fulldate + ft_strlen(fulldate) - 14);
-		timestamp[5] = '\0';
+		//timestamp = ft_strdup(fulldate + ft_strlen(fulldate) - 14);
+		//timestamp[5] = '\0';
+		ft_printf("%.5s ", fulldate + ft_strlen(fulldate) - 14);
 	}
-	ft_printf("%s %2d %5s ", month, day, timestamp);
-	free(month);
-	free(timestamp);
+	//ft_printf("%s %2d %5s ", month, day, timestamp);
+	//free(month);
+	//free(timestamp);
+	//free(fulldate);
 }
 
 t_file				*addfile(struct dirent *e, const char *dname)
