@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 21:19:06 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 02:50:23 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/16 21:55:01 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,12 @@
 #  define m_listxattr(a, b, c, d) listxattr(a, b, c)
 #  define mtimespec st_mtim
 # endif
+
+typedef struct		s_dlist
+{
+	char			*dirname;
+	struct s_dlist	*next;
+}					t_dlist;
 
 typedef struct		s_file
 {
@@ -42,6 +48,7 @@ typedef struct		s_dir
 {
 	t_file			*list;
 	char			*path;
+	t_dlist			*dirlist;
 	long long		size;
 	long long		mlink;
 	long long		mbyte;
@@ -59,12 +66,24 @@ typedef struct		s_opt
 	int				f;
 	int				(*cmp)(void *, void *);
 	int				(*s)(const char *restrict, struct stat *restrict);
+	int				nberror;
 }					t_opt;
 
-typedef struct		s_dlist
-{
-	char			*dirname;
-	struct s_dlist	*next;
-}					t_dlist;
+
+int					ft_ls(t_dir *dir, t_opt *options);
+t_dir				*read_dir(const char *dirname, t_opt *options);
+void				print_file(t_file *c, t_opt *options, t_dir *dir);
+int					print_error(const char *msg);
+
+
+void				ft_mergesort(t_file **list, int (*cmp)(void *, void *));
+int					cmp_alpha(void *a, void *b);
+int					cmp_revalpha(void *a, void *b);
+int					cmp_time(void *a, void *b);
+int					cmp_revtime(void *a, void *b);
+
+t_file				**setup_dir(t_dir **dir);
+t_file				*addfile(struct dirent *e, const char *dname, t_opt *opt);
+char				*get_path(const char *dname, const char *fname);
 
 #endif

@@ -1,4 +1,7 @@
-SRC=ft_ls.c
+SRC=ft_ls.c \
+	ft_mergesort.c \
+	main.c \
+	setup.c
 LIB=libft.a \
 	libftprintf.a
 
