@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 20:10:10 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 21:25:15 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 02:15:30 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ t_file			**setup_dir(t_dir **dir)
 t_file			*addfile(struct dirent *e, const char *dname, t_opt *opt)
 {
 	t_file			*file;
+	struct stat		s;
 
 	file = malloc(sizeof(t_file));
 	ft_memset(file, 0, sizeof(t_file));
@@ -74,9 +75,18 @@ t_file			*addfile(struct dirent *e, const char *dname, t_opt *opt)
 		file->e = NULL;
 		file->path = ft_strdup(dname);
 	}
+	if (stat(file->path, &s) == -1)
+		return (NULL);
+	//if (S_ISDIR(s.st_mode))
+	//	if (lstat(file->path, &s) != -1 && S_ISLNK(s.st_mode) && e == NULL)
+	//		file->s = s;
+
+
 	if (opt->s(file->path, &file->s) == -1)
 		if (lstat(file->path, &file->s) == -1)
 			return (NULL);
+	//if (e == NULL && S_ISDIR(file->s.st_mode))
+	//	lstat(
 	file->pw = getpwuid(file->s.st_uid); 
 	file->gr = getgrgid(file->s.st_gid);
 	file->size = file->s.st_size;

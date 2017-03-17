@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 21:19:06 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 21:55:01 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/16 23:28:58 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ typedef struct		s_dir
 {
 	t_file			*list;
 	char			*path;
-	t_dlist			*dirlist;
+	t_file			*dirlist;
 	long long		size;
 	long long		mlink;
 	long long		mbyte;
@@ -67,6 +67,7 @@ typedef struct		s_opt
 	int				(*cmp)(void *, void *);
 	int				(*s)(const char *restrict, struct stat *restrict);
 	int				nberror;
+	int				dirarg;
 }					t_opt;
 
 

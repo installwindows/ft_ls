@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 19:18:22 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 21:55:53 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/16 23:17:23 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,38 +101,6 @@ AYY:
 	return (count);
 }
 
-static int		set_files(char **arg, t_dlist **d, t_dlist **f, t_opt *opt)
-{
-	struct stat	s;
-	int			nberror;
-
-	nberror = 0;
-	*d = NULL;
-	*f = NULL;
-	while (*arg)
-	{
-		ft_memset(&s, 0, sizeof(struct stat));
-		if (opt->s(*arg, &s) == -1 && lstat(*arg, &s) == -1)
-				nberror += print_error(*arg);
-		else if (S_ISDIR(s.st_mode))
-		{
-			*d = malloc(sizeof(t_dlist));
-			(*d)->dirname = *arg;
-			(*d)->next = NULL;
-			d = &(*d)->next;
-		}
-		else
-		{
-			*f = malloc(sizeof(t_dlist));
-			(*f)->dirname = *arg;
-			(*f)->next = NULL;
-			f = &(*f)->next;
-		}
-		arg++;
-	}
-	return (nberror);
-}
-
 static void		print_opt(t_opt *options, t_dlist *d, t_dlist *f)
 {
 	ft_printf("-l: %d\n-R: %d\n-a: %d\n-r: %d\n-t: %d\n",
@@ -151,100 +119,60 @@ static void		print_opt(t_opt *options, t_dlist *d, t_dlist *f)
 	}
 }
 
-static t_file	*get_argfile(const char *name, t_opt *options)
+t_dir			*read_files(char **files, t_opt *options)
 {
-	t_file			*file;
+	t_dir		*dir;
+	t_file		**dlist;
+	t_file		**current;
+	t_file		*new;
 
-	file = malloc(sizeof(t_file));
-	file->e = NULL;
-	file->path = (char*)name;
-	if (options->s(file->path, &file->s) == -1)
-		if (lstat(file->path, &file->s) == -1)
-			return (NULL);
-	file->pw = getpwuid(file->s.st_uid);
-	file->gr = getgrgid(file->s.st_gid);
-	file->size = file->s.st_size;
-	file->nlink = file->s.st_nlink;
-	file->xattr = m_listxattr(file->path, NULL, 0, 0) > 0;
-	file->blocks = file->s.st_blocks;
-	file->next = NULL;
-	return (file);
-}
-
-static void		print_arg_files(t_dlist *files, t_opt *options)
-{
-	t_file		*list;
-	t_file		**cur;
-	long long	mlink;
-	long long	mbyte;
-	t_dir		dir;
-
-	list = NULL;
-	cur = &list;
-	dir.mlink = 1;
-	dir.mbyte = 1;
-	dir.mpw = 1;
-	dir.mgr = 1;
-	while (files)
+	current = setup_dir(&dir);
+	dlist = &dir->dirlist;
+	while (*files)
 	{
-		*cur = get_argfile(files->dirname, options);
-		if ((*cur)->nlink > mlink)
-			mlink = (*cur)->nlink;
-		if ((*cur)->size > mbyte)
-			mbyte = (*cur)->size;
-		if (ft_strlen((*cur)->pw->pw_name) > dir.mpw)
-			dir.mpw = ft_strlen((*cur)->pw->pw_name);
-		if (ft_strlen((*cur)->gr->gr_name) > dir.mgr)
-			dir.mgr = ft_strlen((*cur)->gr->gr_name);
-		cur = &(*cur)->next;
-		files = files->next;
+		if ((new = addfile(NULL, *files, options)))
+		{
+			if (S_ISDIR(new->s.st_mode))
+			{
+				*dlist = new;
+				dlist = &(*dlist)->next;
+				files++;
+				continue ;
+			}
+			if (new->nlink > dir->mlink)
+				dir->mlink = new->nlink;
+			if (new->size > dir->mbyte)
+				dir->mbyte = new->size;
+			if (ft_strlen(new->pw->pw_name) > dir->mpw)
+				dir->mpw = ft_strlen(new->pw->pw_name);
+			if (ft_strlen(new->gr->gr_name) > dir->mgr)
+				dir->mgr = ft_strlen(new->gr->gr_name);
+			*current = new;
+			current = &(*current)->next;
+		}
+		else
+			options->nberror += print_error(NULL);
+		files++;
 	}
-	dir.mlink = ft_numlen(mlink);
-	dir.mbyte = ft_numlen(mbyte);
-	while (list)
-	{
-		print_file(list, options, &dir);
-		list = list->next;
-	}
+	dir->mlink = ft_numlen(dir->mlink);
+	dir->mbyte = ft_numlen(dir->mbyte);
+	return (dir);
 }
 
 int				main(int argc, char **argv)
 {
 	t_opt			*options;
-	t_dlist			*dirlist;
-	t_dlist			*filelist;
+	t_dir			*dir;
 	int				count;
 
 	count = set_options(++argv, &options);
-	count = set_files(argv + count, &dirlist, &filelist, options);
-	//print_opt(options, dirlist, filelist);
-	//exit(0);
-	if (argc > 1 && (filelist || dirlist))
+	dir = read_files(argv + count, options);
+	if (argc > 1 && (dir->list || dir->dirlist))
 	{
-		/*
-		if (!options->f)
-		{
-			if (options->t)
-			{
-				ft_mergesort(&filelist, cmp_alpha);
-				ft_mergesort(&dirlist, cmp_alpha);
-			}
-			ft_mergesort(&filelist, options->cmp);
-			ft_mergesort(&dirlist, options->cmp);
-		}
-		*/
-		print_arg_files(filelist, options);
-		if ((filelist && dirlist) || (dirlist && dirlist->next))
-			ft_printf("%s%s:\n", filelist ? "\n" : "", dirlist->dirname);
-		while (dirlist)
-		{	
-			count += ft_ls(read_dir(dirlist->dirname, options), options);
-			if (dirlist->next)
-				ft_printf("\n%s:\n", dirlist->next->dirname);
-			dirlist = dirlist->next;
-		}
+		options->dirarg = 1;
+		ft_ls(dir, options);
 	}
-	else if (count == 0)
-		count = ft_ls(read_dir(".", options), options);
-	return (count);
+	else
+		ft_ls(read_dir(".", options), options);
+	return (options->nberror);
 }

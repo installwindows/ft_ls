@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 21:56:48 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 00:39:36 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,12 +116,13 @@ t_dir			*read_dir(const char *dirname, t_opt *options)
 {
 	struct dirent	*e;
 	t_dir			*dir;
-	t_dlist			**cur;
+	t_file			**dirlist;
 	t_file			**current;
 	DIR				*pdir;
+	int				d = 0;
 
 	current = setup_dir(&dir);
-	cur = &dir->dirlist;
+	dirlist = &dir->dirlist;
 	if (!(pdir = opendir(dirname)))
 	{
 		print_error(dirname);
@@ -129,6 +130,7 @@ t_dir			*read_dir(const char *dirname, t_opt *options)
 	}
 	while ((e = readdir(pdir)))
 	{
+		d++;
 		if (options->a == 0 && e->d_name[0] == '.')
 			continue ;
 		if ((*current = addfile(e, dirname, options)))
@@ -145,10 +147,10 @@ t_dir			*read_dir(const char *dirname, t_opt *options)
 			if (ft_strcmp(e->d_name, ".") &&
 				ft_strcmp(e->d_name, "..") && S_ISDIR((*current)->s.st_mode))
 			{
-				(*cur) = malloc(sizeof(t_dlist));
-				(*cur)->dirname = ft_strdup((*current)->path);
-				(*cur)->next = NULL;
-				cur = &(*cur)->next;
+				*dirlist = *current;
+				*current = NULL;
+				dirlist = &(*dirlist)->next;
+				continue ;
 			}
 			current = &(*current)->next;
 		}
@@ -161,22 +163,33 @@ t_dir			*read_dir(const char *dirname, t_opt *options)
 	return (dir);
 }
 
+void			sort_lists(t_dir *dir, t_opt *options)
+{
+	if (!options->f)
+	{
+		ft_mergesort(&dir->dirlist, options->r && !options->t
+									? cmp_revalpha : cmp_alpha);
+		if (options->t)
+		{
+			ft_mergesort(&dir->list, cmp_alpha);
+			ft_mergesort(&dir->dirlist, options->cmp);
+		}
+		ft_mergesort(&dir->list, options->cmp);
+	}
+}
+
 int				ft_ls(t_dir *dir, t_opt *options)
 {
 	options->nberror = 0;
-	if (!options->f)
-	{
-		if (options->t)
-			ft_mergesort(&dir->list, cmp_alpha);
-		ft_mergesort(&dir->list, options->cmp);
-	}
+	sort_lists(dir, options);
 	print_dir(dir, options);
-	if (options->R)
+	if (options->R || options->dirarg)
 	{
+		options->dirarg = 0;
 		while (dir->dirlist)
 		{
-			ft_printf("\n%s:\n", dir->dirlist->dirname);
-			ft_ls(read_dir(dir->dirlist->dirname, options), options);
+			ft_printf("\n%s:\n", dir->dirlist->path);
+			ft_ls(read_dir(dir->dirlist->path, options), options);
 			dir->dirlist = dir->dirlist->next;
 		}
 	}

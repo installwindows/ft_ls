@@ -6,16 +6,15 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 18:58:46 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 04:14:44 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/16 23:15:38 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-/*
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "ft_ls.h"
 #include "libft.h"
-*/
 /*
 void	add(t_file **list, const char *data)
 {
@@ -27,8 +26,6 @@ void	add(t_file **list, const char *data)
 	new->next = *list;
 	*list = new;
 }
-*/
-/*
 void	print(t_file *list)
 {
 	while (list)
@@ -40,7 +37,7 @@ void	print(t_file *list)
 }
 */
 
-void	split(t_file *list, t_file **a, t_file **b)
+static void		split(t_file *list, t_file **a, t_file **b)
 {
 	t_file	*fast;
 	t_file	*slow;
@@ -67,7 +64,7 @@ void	split(t_file *list, t_file **a, t_file **b)
 	slow->next = NULL;
 }
 
-t_file	*merge(t_file *a, t_file *b, int (*cmp)(void *, void *))
+static t_file	*merge(t_file *a, t_file *b, int (*cmp)(void *, void *))
 {
 	t_file	*result;
 
@@ -89,7 +86,7 @@ t_file	*merge(t_file *a, t_file *b, int (*cmp)(void *, void *))
 	return (result);
 }
 
-void	ft_mergesort(t_file **list, int (*cmp)(void *, void *))
+void			ft_mergesort(t_file **list, int (*cmp)(void *, void *))
 {
 	t_file	*a;
 	t_file	*b;
@@ -102,27 +99,31 @@ void	ft_mergesort(t_file **list, int (*cmp)(void *, void *))
 	*list = merge(a, b, cmp);
 }
 
-int		cmp_alpha(void *a, void *b)
+int				cmp_alpha(void *a, void *b)
 {
 	t_file	*x;
 	t_file	*y;
 
 	x = (t_file*)a;
 	y = (t_file*)b;
-	return (ft_strcmp(x->e->d_name, y->e->d_name));
+	if (x->e && y->e)
+		return (ft_strcmp(x->e->d_name, y->e->d_name));
+	return (ft_strcmp(x->path, y->path));
 }
 
-int		cmp_revalpha(void *a, void *b)
+int				cmp_revalpha(void *a, void *b)
 {
 	t_file	*x;
 	t_file	*y;
 
 	x = (t_file*)a;
 	y = (t_file*)b;
-	return (ft_strcmp(x->e->d_name, y->e->d_name) < 0);
+	if (x->e && y->e)
+		return (ft_strcmp(x->e->d_name, y->e->d_name) < 0);
+	return (ft_strcmp(x->path, y->path) < 0);
 }
 
-int		cmp_time(void *a, void *b)
+int				cmp_time(void *a, void *b)
 {
 	t_file	*x;
 	t_file	*y;
@@ -135,7 +136,7 @@ int		cmp_time(void *a, void *b)
 	return (y->s.st_mtimespec.tv_sec - x->s.st_mtimespec.tv_sec);
 }
 
-int		cmp_revtime(void *a, void *b)
+int				cmp_revtime(void *a, void *b)
 {
 	t_file	*x;
 	t_file	*y;
