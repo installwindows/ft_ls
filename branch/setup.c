@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 20:10:10 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 21:31:26 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 22:45:02 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ t_file			*addfile(struct dirent *e, const char *dname, t_opt *opt)
 	file->gr = getgrgid(file->s.st_gid);
 	file->size = file->s.st_size;
 	file->nlink = file->s.st_nlink;
-	file->xattr = m_listxattr(file->path, NULL, 0, 0) > 0;
+	file->xattr = m_listxattr(file->path, NULL, 0, opt->l ? XATTR_NOFOLLOW : 0) > 0;
 	file->blocks = file->s.st_blocks;
 	file->next = NULL;
 	return (file);

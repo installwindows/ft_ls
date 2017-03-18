@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 22:05:47 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 22:33:49 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,7 +129,7 @@ t_dir			*read_dir(const char *dirname, t_opt *options)
 	dirlist = &dir->dirlist;
 	if (!(pdir = opendir(dirname)))
 	{
-		print_error(dirname);
+		print_error(ft_strchr(dirname, '/') ? ft_strchr(dirname, '/') + 1 : dirname);
 		return (NULL);
 	}
 	while ((e = readdir(pdir)))
@@ -187,8 +187,10 @@ int				ft_ls(t_dir *dir, t_opt *options)
 	int		bytes;
 	int		i;
 
+	if (dir == NULL)
+		return (1);
 	i = 0;
-	options->nberror = 0;
+	//options->nberror = 0;
 	sort_lists(dir, options);
 	bytes = print_dir(dir, options);
 	if (options->R || options->dirarg)
@@ -199,6 +201,8 @@ int				ft_ls(t_dir *dir, t_opt *options)
 			if (bytes || i)
 				ft_printf("\n%s:\n", dir->dirlist->path);
 			else if (options->nbdir > 1)
+				ft_printf("%s:\n", dir->dirlist->path);
+			else if (options->nberror)
 				ft_printf("%s:\n", dir->dirlist->path);
 			ft_ls(read_dir(dir->dirlist->path, options), options);
 			dir->dirlist = dir->dirlist->next;
