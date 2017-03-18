@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 19:18:22 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 21:38:36 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 23:47:18 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static int		set_options(char **arg, t_opt **options)
 						goto AYY;
 					}
 					else
-						usage(*(*arg + 1));
+						usage(*(*arg));
 				}
 				else if (ft_strchr("ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1", **arg) == NULL)
 					usage(**arg);

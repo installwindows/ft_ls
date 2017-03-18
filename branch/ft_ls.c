@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 22:33:49 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 23:41:47 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ int				print_file(t_file *c, t_opt *options, t_dir *dir)
 	ft_memset(buf, 0, 254);
 	if (options->l)
 	{
-		ft_printf("%c%c%c%c%c%c%c%c%c%c%1s %*d %-*s  %-*s  %*lld ",
+		ft_printf("%c%c%c%c%c%c%c%c%c%c%1s %*d %-*s  %-*s  ",
 		entry_type(c->s.st_mode),
 		c->s.st_mode & S_IRUSR ? 'r' : '-',
 		c->s.st_mode & S_IWUSR ? 'w' : '-',
@@ -82,9 +82,14 @@ int				print_file(t_file *c, t_opt *options, t_dir *dir)
 		//c->s.st_mode & S_IXGRP ? 'x' : '-',
 		c->s.st_mode & S_IROTH ? 'r' : '-',
 		c->s.st_mode & S_IWOTH ? 'w' : '-',
-		c->s.st_mode & S_IXOTH ? 'x' : '-',
+		c->s.st_mode & S_ISVTX && !(c->s.st_mode & S_IXOTH) ? 'T' : c->s.st_mode & S_ISVTX && c->s.st_mode & S_IXOTH ? 't' : c->s.st_mode & S_IXOTH ? 'x' : '-',
 		c->xattr ? "@" : "", dir->mlink, c->nlink,
-		dir->mpw, c->pw->pw_name, dir->mgr, c->gr->gr_name, dir->mbyte, c->size);
+		dir->mpw, c->pw->pw_name, dir->mgr, c->gr->gr_name);
+		if (S_ISBLK(c->s.st_mode) || S_ISCHR(c->s.st_mode))
+			ft_printf("%d, %d ", major(c->s.st_rdev), minor(c->s.st_rdev));
+		else
+			ft_printf("%*lld ", dir->mbyte, c->size);
+
 		print_time(c->s.st_mtimespec.tv_sec);
 		ft_printf("%s", c->e ? c->e->d_name : c->path);
 		if (S_ISLNK(c->s.st_mode))

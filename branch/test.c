@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/types.h>
 
 int		main(int argc, char **argv)
 {
@@ -17,7 +18,9 @@ int		main(int argc, char **argv)
 		while (*++argv)
 		{
 			lstat(*argv, &s);
-			printf("%s: %s\n", *argv, listxattr(*argv, NULL, 0, XATTR_NOFOLLOW) > 0 ? "@" : "");
+			printf("%s: %s major:%d minor:%d\n",
+			*argv, listxattr(*argv, NULL, 0, XATTR_NOFOLLOW) > 0 ? "@" : "",
+			major(s.st_rdev), minor(s.st_rdev));
 		}
 	}
 }
