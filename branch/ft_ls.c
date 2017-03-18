@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 00:39:36 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 22:05:47 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ static void		print_time(time_t t)
 		ft_printf("%.5s ", fulldate + ft_strlen(fulldate) - 14);
 }
 
-void			print_file(t_file *c, t_opt *options, t_dir *dir)
+int				print_file(t_file *c, t_opt *options, t_dir *dir)
 {
 	char	buf[255];
 
@@ -96,20 +96,24 @@ void			print_file(t_file *c, t_opt *options, t_dir *dir)
 	else
 		ft_printf("%s", c->e ? c->e->d_name : c->path);
 	ft_printf("\n");
+	return (1);
 }
 
-static void		print_dir(t_dir *dir, t_opt *options)
+static int		print_dir(t_dir *dir, t_opt *options)
 {
 	t_file	*c;
+	int		bytes;
 
+	bytes = 0;
 	c = dir->list;
-	if (options->l && dir->list)
-		ft_printf("total %d\n", dir->size);
+	if (options->l && dir->list && !options->dirarg)
+		bytes += ft_printf("total %d\n", dir->size);
 	while (c)
 	{
-		print_file(c, options, dir);
+		bytes += print_file(c, options, dir);
 		c = c->next;
 	}
+	return (bytes);
 }
 
 t_dir			*read_dir(const char *dirname, t_opt *options)
@@ -147,10 +151,10 @@ t_dir			*read_dir(const char *dirname, t_opt *options)
 			if (ft_strcmp(e->d_name, ".") &&
 				ft_strcmp(e->d_name, "..") && S_ISDIR((*current)->s.st_mode))
 			{
-				*dirlist = *current;
-				*current = NULL;
+				*dirlist = ft_memdup(*current, sizeof(t_file));
+				//*current = NULL;
 				dirlist = &(*dirlist)->next;
-				continue ;
+				//continue ;
 			}
 			current = &(*current)->next;
 		}
@@ -180,17 +184,25 @@ void			sort_lists(t_dir *dir, t_opt *options)
 
 int				ft_ls(t_dir *dir, t_opt *options)
 {
+	int		bytes;
+	int		i;
+
+	i = 0;
 	options->nberror = 0;
 	sort_lists(dir, options);
-	print_dir(dir, options);
+	bytes = print_dir(dir, options);
 	if (options->R || options->dirarg)
 	{
 		options->dirarg = 0;
 		while (dir->dirlist)
 		{
-			ft_printf("\n%s:\n", dir->dirlist->path);
+			if (bytes || i)
+				ft_printf("\n%s:\n", dir->dirlist->path);
+			else if (options->nbdir > 1)
+				ft_printf("%s:\n", dir->dirlist->path);
 			ft_ls(read_dir(dir->dirlist->path, options), options);
 			dir->dirlist = dir->dirlist->next;
+			i++;
 		}
 	}
 	return (options->nberror);

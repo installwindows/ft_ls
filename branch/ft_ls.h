@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 21:19:06 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 23:28:58 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 21:38:06 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,12 +68,15 @@ typedef struct		s_opt
 	int				(*s)(const char *restrict, struct stat *restrict);
 	int				nberror;
 	int				dirarg;
+	int				nbdir;
+	int				nbfiles;
+	int				first;
 }					t_opt;
 
 
 int					ft_ls(t_dir *dir, t_opt *options);
 t_dir				*read_dir(const char *dirname, t_opt *options);
-void				print_file(t_file *c, t_opt *options, t_dir *dir);
+int					print_file(t_file *c, t_opt *options, t_dir *dir);
 int					print_error(const char *msg);
 
 

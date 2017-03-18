@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 19:18:22 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 23:17:23 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/17 21:38:36 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ static int		set_options(char **arg, t_opt **options)
 	ft_memset(*options, 0, sizeof(t_opt));
 	(*options)->cmp = cmp_alpha;
 	(*options)->s = stat;
+	(*options)->first = 1;
 	while (*arg)
 	{
 		if (**arg == '-' && (*arg)[1] == '\0')
@@ -98,6 +99,8 @@ AYY:
 		(*options)->cmp = cmp_revalpha;
 	else if ((*options)->t)
 		(*options)->cmp = cmp_time;
+	if ((*options)->l)
+		(*options)->s = lstat;
 	return (count);
 }
 
@@ -136,6 +139,7 @@ t_dir			*read_files(char **files, t_opt *options)
 			{
 				*dlist = new;
 				dlist = &(*dlist)->next;
+				options->nbdir++;
 				files++;
 				continue ;
 			}
@@ -149,9 +153,10 @@ t_dir			*read_files(char **files, t_opt *options)
 				dir->mgr = ft_strlen(new->gr->gr_name);
 			*current = new;
 			current = &(*current)->next;
+			options->nbfiles++;
 		}
 		else
-			options->nberror += print_error(NULL);
+			options->nberror += print_error(*files);
 		files++;
 	}
 	dir->mlink = ft_numlen(dir->mlink);
@@ -172,6 +177,8 @@ int				main(int argc, char **argv)
 		options->dirarg = 1;
 		ft_ls(dir, options);
 	}
+	else if (options->nberror)
+		;
 	else
 		ft_ls(read_dir(".", options), options);
 	return (options->nberror);
