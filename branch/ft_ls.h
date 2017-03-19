@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 21:19:06 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/18 22:46:24 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 23:58:46 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,6 @@
 # include <sys/stat.h>
 # include <grp.h>
 # include <pwd.h>
-
-typedef struct		s_dlist
-{
-	char			*dirname;
-	struct s_dlist	*next;
-}					t_dlist;
 
 typedef struct		s_file
 {
@@ -40,7 +34,6 @@ typedef struct		s_file
 typedef struct		s_dir
 {
 	t_file			*list;
-	char			*path;
 	t_file			*dirlist;
 	long long		size;
 	long long		mlink;
@@ -87,5 +80,7 @@ char				*get_path(const char *dname, const char *fname);
 void				ft_qsort(void *array, int n, int size,
 					int (*cmp)(const void *, const void *));
 int					cmp_alphasort(const void *a, const void *b);
+
+void				free_dir(t_dir *dir);
 
 #endif

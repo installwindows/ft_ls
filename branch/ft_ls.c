@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/18 23:07:02 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/19 00:12:38 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,5 +132,6 @@ int				ft_ls(t_dir *dir, t_opt *options)
 			i++;
 		}
 	}
+	//free_dir(dir);
 	return (options->nberror);
 }

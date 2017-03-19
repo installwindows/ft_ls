@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 20:10:10 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/18 22:46:40 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 23:56:06 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ t_file			**setup_dir(t_dir **dir)
 	(*dir) = malloc(sizeof(t_dir));
 	(*dir)->list = NULL;
 	(*dir)->dirlist = NULL;
-	(*dir)->path = NULL;
 	(*dir)->size = 0;
 	(*dir)->mlink = 1;
 	(*dir)->mbyte = 1;
