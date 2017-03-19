@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 19:18:22 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 23:47:18 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 20:38:35 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static void		usage(char c)
 		write(2, &c, 1);
 		write(2, "\n", 1);
 	}
-	write(2, "usage: ft_ls [-lRart] [file ...]\n", 33);
+	write(2, "usage: ls [-ABCFGHLOPRSTUWabcdefghiklmnopqrstuwx1] [file ...]\n", 62);
 	exit(1);
 }
 
@@ -171,6 +171,7 @@ int				main(int argc, char **argv)
 	int				count;
 
 	count = set_options(++argv, &options);
+	ft_qsort(argv + count, argc - count - 1, sizeof(char*), cmp_alphasort);
 	dir = read_files(argv + count, options);
 	if (argc > 1 && (dir->list || dir->dirlist))
 	{

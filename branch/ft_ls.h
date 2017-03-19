@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 21:19:06 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 21:38:06 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 20:11:36 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,5 +89,9 @@ int					cmp_revtime(void *a, void *b);
 t_file				**setup_dir(t_dir **dir);
 t_file				*addfile(struct dirent *e, const char *dname, t_opt *opt);
 char				*get_path(const char *dname, const char *fname);
+
+void				ft_qsort(void *array, int n, int size,
+					int (*cmp)(const void *, const void *));
+int					cmp_alphasort(const void *a, const void *b);
 
 #endif
