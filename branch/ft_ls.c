@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/18 22:41:23 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 23:07:02 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,7 +99,7 @@ void			sort_lists(t_dir *dir, t_opt *options)
 									? cmp_revalpha : cmp_alpha);
 		if (options->t)
 		{
-			ft_mergesort(&dir->list, cmp_alpha);
+			ft_mergesort(&dir->list, options->r ? cmp_revalpha : cmp_alpha);
 			ft_mergesort(&dir->dirlist, options->cmp);
 		}
 		ft_mergesort(&dir->list, options->cmp);
