@@ -10,4 +10,4 @@ LIB=libft.a \
 	libftprintf.a
 
 all:
-	gcc $(SRC) $(LIB) -g -o ft_ls
+	gcc $(SRC) $(LIB) -g -o ft_ls -Wall -Werror -Wextra

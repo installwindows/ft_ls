@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 21:19:06 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/18 22:40:53 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 22:46:24 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ typedef struct		s_dir
 	long long		size;
 	long long		mlink;
 	long long		mbyte;
-	int				mpw;
-	int				mgr;
+	size_t			mpw;
+	size_t			mgr;
 }					t_dir;
 
 typedef struct		s_opt

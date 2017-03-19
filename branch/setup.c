@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 20:10:10 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/18 22:41:59 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 22:46:40 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,6 @@ t_file			**setup_dir(t_dir **dir)
 t_file			*addfile(struct dirent *e, const char *dname, t_opt *opt)
 {
 	t_file			*file;
-	struct stat		s;
 
 	file = malloc(sizeof(t_file));
 	ft_memset(file, 0, sizeof(t_file));
