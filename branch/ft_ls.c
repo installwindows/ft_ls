@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/13 19:26:40 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 23:41:47 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 22:41:23 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,86 +23,6 @@
 #include "libft.h"
 #include "ft_ls.h"
 #include "ft_printf.h"
-
-int				print_error(const char *msg)
-{
-	write(2, "ls: ", 4);
-	perror(msg);
-	return (1);
-}
-
-static char		entry_type(mode_t st_mode)
-{
-	if (S_ISFIFO(st_mode))
-		return ('p');
-	if (S_ISCHR(st_mode))
-		return ('c');
-	if (S_ISDIR(st_mode))
-		return ('d');
-	if (S_ISBLK(st_mode))
-		return ('b');
-	if (S_ISREG(st_mode))
-		return ('-');
-	if (S_ISLNK(st_mode))
-		return ('l');
-	if (S_ISSOCK(st_mode))
-		return ('s');
-	return ('-');
-}
-
-static void		print_time(time_t t)
-{
-	time_t	c;
-	char	*fulldate;
-
-	c = time(NULL);
-	fulldate = ctime(&t);
-	ft_printf("%.3s %2d ", fulldate + 4, ft_atoi(fulldate + 8));
-	if (c - t > 15780000 || c - t < -15780000)
-		ft_printf(" %.4s ", fulldate + ft_strlen(fulldate) - 5);
-	else
-		ft_printf("%.5s ", fulldate + ft_strlen(fulldate) - 14);
-}
-
-int				print_file(t_file *c, t_opt *options, t_dir *dir)
-{
-	char	buf[255];
-
-	ft_memset(buf, 0, 254);
-	if (options->l)
-	{
-		ft_printf("%c%c%c%c%c%c%c%c%c%c%1s %*d %-*s  %-*s  ",
-		entry_type(c->s.st_mode),
-		c->s.st_mode & S_IRUSR ? 'r' : '-',
-		c->s.st_mode & S_IWUSR ? 'w' : '-',
-		c->s.st_mode & S_ISUID && c->s.st_mode & S_IXUSR ? 's' : c->s.st_mode & S_ISUID ? 'S' : c->s.st_mode & S_IXUSR ? 'x' : '-',
-		c->s.st_mode & S_IRGRP ? 'r' : '-',
-		c->s.st_mode & S_IWGRP ? 'w' : '-',
-		c->s.st_mode & S_ISGID && c->s.st_mode & S_IXGRP ? 's' : c->s.st_mode & S_ISGID ? 'S' : c->s.st_mode & S_IXGRP ? 'x' : '-',
-		//c->s.st_mode & S_IXGRP ? 'x' : '-',
-		c->s.st_mode & S_IROTH ? 'r' : '-',
-		c->s.st_mode & S_IWOTH ? 'w' : '-',
-		c->s.st_mode & S_ISVTX && !(c->s.st_mode & S_IXOTH) ? 'T' : c->s.st_mode & S_ISVTX && c->s.st_mode & S_IXOTH ? 't' : c->s.st_mode & S_IXOTH ? 'x' : '-',
-		c->xattr ? "@" : "", dir->mlink, c->nlink,
-		dir->mpw, c->pw->pw_name, dir->mgr, c->gr->gr_name);
-		if (S_ISBLK(c->s.st_mode) || S_ISCHR(c->s.st_mode))
-			ft_printf("%d, %d ", major(c->s.st_rdev), minor(c->s.st_rdev));
-		else
-			ft_printf("%*lld ", dir->mbyte, c->size);
-
-		print_time(c->s.st_mtimespec.tv_sec);
-		ft_printf("%s", c->e ? c->e->d_name : c->path);
-		if (S_ISLNK(c->s.st_mode))
-		{
-			readlink(c->path, buf, 255);
-			ft_printf(" -> %s", buf);
-		}
-	}
-	else
-		ft_printf("%s", c->e ? c->e->d_name : c->path);
-	ft_printf("\n");
-	return (1);
-}
 
 static int		print_dir(t_dir *dir, t_opt *options)
 {
@@ -121,6 +41,27 @@ static int		print_dir(t_dir *dir, t_opt *options)
 	return (bytes);
 }
 
+static void		check_file(struct dirent *e, t_dir *dir, t_file ***file,
+				t_file ***dirlist)
+{
+	dir->size += (**file)->blocks;
+	if ((**file)->nlink > dir->mlink)
+		dir->mlink = (**file)->nlink;
+	if ((**file)->size > dir->mbyte)
+		dir->mbyte = (**file)->size;
+	if (ft_strlen((**file)->pw->pw_name) > dir->mpw)
+		dir->mpw = ft_strlen((**file)->pw->pw_name);
+	if (ft_strlen((**file)->gr->gr_name) > dir->mgr)
+		dir->mgr = ft_strlen((**file)->gr->gr_name);
+	if (ft_strcmp(e->d_name, ".") &&
+		ft_strcmp(e->d_name, "..") && S_ISDIR((**file)->s.st_mode))
+	{
+		**dirlist = ft_memdup(**file, sizeof(t_file));
+		*dirlist = &(**dirlist)->next;
+	}
+	*file = &(**file)->next;
+}
+
 t_dir			*read_dir(const char *dirname, t_opt *options)
 {
 	struct dirent	*e;
@@ -128,44 +69,22 @@ t_dir			*read_dir(const char *dirname, t_opt *options)
 	t_file			**dirlist;
 	t_file			**current;
 	DIR				*pdir;
-	int				d = 0;
 
 	current = setup_dir(&dir);
 	dirlist = &dir->dirlist;
 	if (!(pdir = opendir(dirname)))
 	{
-		print_error(ft_strchr(dirname, '/') ? ft_strchr(dirname, '/') + 1 : dirname);
+		print_error(ft_strchr(dirname, '/') ? ft_strchr(dirname, '/') + 1 :
+					dirname);
 		return (NULL);
 	}
 	while ((e = readdir(pdir)))
-	{
-		d++;
 		if (options->a == 0 && e->d_name[0] == '.')
 			continue ;
-		if ((*current = addfile(e, dirname, options)))
-		{
-			dir->size += (*current)->blocks;
-			if ((*current)->nlink > dir->mlink)
-				dir->mlink = (*current)->nlink;
-			if ((*current)->size > dir->mbyte)
-				dir->mbyte = (*current)->size;
-			if (ft_strlen((*current)->pw->pw_name) > dir->mpw)
-				dir->mpw = ft_strlen((*current)->pw->pw_name);
-			if (ft_strlen((*current)->gr->gr_name) > dir->mgr)
-				dir->mgr = ft_strlen((*current)->gr->gr_name);
-			if (ft_strcmp(e->d_name, ".") &&
-				ft_strcmp(e->d_name, "..") && S_ISDIR((*current)->s.st_mode))
-			{
-				*dirlist = ft_memdup(*current, sizeof(t_file));
-				//*current = NULL;
-				dirlist = &(*dirlist)->next;
-				//continue ;
-			}
-			current = &(*current)->next;
-		}
+		else if ((*current = addfile(e, dirname, options)))
+			check_file(e, dir, &current, &dirlist);
 		else
 			options->nberror += print_error(NULL);
-	}
 	dir->mlink = ft_numlen(dir->mlink);
 	dir->mbyte = ft_numlen(dir->mbyte);
 	closedir(pdir);
@@ -195,10 +114,9 @@ int				ft_ls(t_dir *dir, t_opt *options)
 	if (dir == NULL)
 		return (1);
 	i = 0;
-	//options->nberror = 0;
 	sort_lists(dir, options);
 	bytes = print_dir(dir, options);
-	if (options->R || options->dirarg)
+	if (options->cr || options->dirarg)
 	{
 		options->dirarg = 0;
 		while (dir->dirlist)

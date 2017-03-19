@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/16 20:10:10 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/17 22:45:02 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 22:41:59 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,18 +71,16 @@ t_file			*addfile(struct dirent *e, const char *dname, t_opt *opt)
 		file->path = get_path(dname, e->d_name);
 	}
 	else
-	{
-		file->e = NULL;
 		file->path = ft_strdup(dname);
-	}
 	if (opt->s(file->path, &file->s) == -1)
 		if (lstat(file->path, &file->s) == -1)
 			return (NULL);
-	file->pw = getpwuid(file->s.st_uid); 
+	file->pw = getpwuid(file->s.st_uid);
 	file->gr = getgrgid(file->s.st_gid);
 	file->size = file->s.st_size;
 	file->nlink = file->s.st_nlink;
-	file->xattr = m_listxattr(file->path, NULL, 0, opt->l ? XATTR_NOFOLLOW : 0) > 0;
+	file->xattr = listxattr(file->path, NULL, 0,
+					opt->l ? XATTR_NOFOLLOW : 0) > 0;
 	file->blocks = file->s.st_blocks;
 	file->next = NULL;
 	return (file);

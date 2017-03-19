@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/14 18:58:46 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/16 23:15:38 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 22:41:01 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,6 @@
 #include <string.h>
 #include "ft_ls.h"
 #include "libft.h"
-/*
-void	add(t_file **list, const char *data)
-{
-	t_file	*new;
-
-	new = malloc(sizeof(t_file));
-	new->e = malloc(sizeof(struct dirent));
-	strcpy(new->e->d_name, data);
-	new->next = *list;
-	*list = new;
-}
-void	print(t_file *list)
-{
-	while (list)
-	{
-		printf("%3s, ", list->e->d_name);
-		list = list->next;
-	}
-	printf("\n");
-}
-*/
 
 static void		split(t_file *list, t_file **a, t_file **b)
 {
@@ -98,76 +77,3 @@ void			ft_mergesort(t_file **list, int (*cmp)(void *, void *))
 	ft_mergesort(&b, cmp);
 	*list = merge(a, b, cmp);
 }
-
-int				cmp_alpha(void *a, void *b)
-{
-	t_file	*x;
-	t_file	*y;
-
-	x = (t_file*)a;
-	y = (t_file*)b;
-	if (x->e && y->e)
-		return (ft_strcmp(x->e->d_name, y->e->d_name));
-	return (ft_strcmp(x->path, y->path));
-}
-
-int				cmp_revalpha(void *a, void *b)
-{
-	t_file	*x;
-	t_file	*y;
-
-	x = (t_file*)a;
-	y = (t_file*)b;
-	if (x->e && y->e)
-		return (ft_strcmp(x->e->d_name, y->e->d_name) < 0);
-	return (ft_strcmp(x->path, y->path) < 0);
-}
-
-int				cmp_time(void *a, void *b)
-{
-	t_file	*x;
-	t_file	*y;
-
-	x = (t_file*)a;
-	y = (t_file*)b;
-	if (y->s.st_mtimespec.tv_sec == x->s.st_mtimespec.tv_sec)
-		//if (y->s.st_mtimespec.tv_nsec && x->s.st_mtimespec.tv_nsec)
-		return (y->s.st_mtimespec.tv_nsec - x->s.st_mtimespec.tv_nsec);
-	return (y->s.st_mtimespec.tv_sec - x->s.st_mtimespec.tv_sec);
-}
-
-int				cmp_revtime(void *a, void *b)
-{
-	t_file	*x;
-	t_file	*y;
-
-	x = (t_file*)a;
-	y = (t_file*)b;
-	if (y->s.st_mtimespec.tv_sec == x->s.st_mtimespec.tv_sec)
-	//if (y->s.st_mtimespec.tv_nsec && x->s.st_mtimespec.tv_nsec)
-		return (x->s.st_mtimespec.tv_nsec - y->s.st_mtimespec.tv_nsec);
-	return (x->s.st_mtimespec.tv_sec - y->s.st_mtimespec.tv_sec);
-}
-/*
-int		main(void)
-{
-	t_file	*list;
-
-	list = NULL;
-	add(&list, "5");
-	add(&list, "6");
-	add(&list, "9");
-	add(&list, "18");
-	add(&list, "0");
-	add(&list, "77");
-	add(&list, "66");
-	add(&list, "1");
-	add(&list, "167");
-	add(&list, "4");
-	add(&list, "87");
-	add(&list, "87");
-	print(list);
-	ft_mergesort(&list, cmp_revalpha);
-	print(list);
-}
-*/

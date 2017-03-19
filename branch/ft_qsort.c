@@ -6,7 +6,7 @@
 /*   By: varnaud <varnaud@student.42.us.org>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/03/18 19:58:09 by varnaud           #+#    #+#             */
-/*   Updated: 2017/03/18 20:12:38 by varnaud          ###   ########.fr       */
+/*   Updated: 2017/03/18 22:09:53 by varnaud          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,6 @@ static void	swap(unsigned char *a, unsigned char *b, size_t size)
 		*b++ = tmp;
 	}
 }
-
-/*
- * Meh
- *
- */
 
 void		ft_qsort(void *array, int n, int size,
 			int (*cmp)(const void *, const void *))
